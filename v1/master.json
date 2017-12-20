@@ -4,12 +4,12 @@
     "relationships": [
         {
             "oplan": "natgw",
-            "to_oplan": "commondefs",
+            "to_oplan": "common",
             "type": "depends"
         },
         {
             "oplan": "jumphost",
-            "to_oplan": "commondefs",
+            "to_oplan": "common",
             "type": "depends"
         },
         {
@@ -30,11 +30,11 @@
     ],
     "oplans": [
         {
-            "label": "commondefs",
+            "label": "common",
             "obj_type": "orchestration",
             "objects": [
                 {
-                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/commondefs"
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/common"
                 }
             ]
         },
