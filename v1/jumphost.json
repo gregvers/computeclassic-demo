@@ -44,7 +44,7 @@
       "obj_type": "network/v1/ipnetwork",
       "objects": [
         {
-          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-network",
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-network",
           "ipAddressPrefix": "192.168.1.0/24",
           "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
         }
