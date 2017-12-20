@@ -40,7 +40,7 @@
       "obj_type": "network/v1/acl",
       "objects": [
         {
-          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-acl"
         }
       ]
     },
@@ -49,9 +49,9 @@
       "obj_type": "network/v1/vnicset",
       "objects": [
         {
-          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-vnicset",
           "appliedAcls": [
-            "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+            "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-acl"
           ]
         }
       ]
@@ -63,26 +63,26 @@
         {
           "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-from-apps",
           "flowDirection": "ingress",
-          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
-          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-int-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-vnicset",
           "secProtocols": ["/Compute-computepm/gregory.verstraeten@oracle.com/mongodb"],
-          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-acl"
         },
         {
           "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-from-jumphost",
           "flowDirection": "ingress",
-          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
-          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-int-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-vnicset",
           "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/icmp", "/Compute-computepm/gregory.verstraeten@oracle.com/ssh" ],
-          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-acl"
         },
         {
           "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-to-natgw",
           "flowDirection": "egress",
-          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
-          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-int-vnicset",
           "secProtocols": ["/Compute-computepm/gregory.verstraeten@oracle.com/icmp", "/Compute-computepm/gregory.verstraeten@oracle.com/http", "/Compute-computepm/gregory.verstraeten@oracle.com/https"],
-          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-acl"
         }
       ]
     },
@@ -99,7 +99,7 @@
               "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/db_eth0",
               "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/db-network",
               "dns": [ "db" ],
-              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset" ]
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/db-int-vnicset" ]
             }
           },
           "label" : "db",
