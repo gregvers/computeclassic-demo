@@ -168,7 +168,7 @@
           "networking" : {
             "eth0" : {
               "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw_eth0",
-              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/externalfacing-network",
               "dns": [  ],
               "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-ext-vnicset" ],
               "nat" : [ "network/v1/ipreservation:/Compute-computepm/gregory.verstraeten@oracle.com/natgw-ip" ]

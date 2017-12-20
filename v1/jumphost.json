@@ -75,7 +75,7 @@
         {
           "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-int-vnicset",
           "appliedAcls": [
-            "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-ext-acl"
+            "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-int-acl"
           ]
         }
       ]
@@ -155,7 +155,7 @@
               "networking": {
                 "eth0": {
                   "vnic": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost_eth0",
-                  "ipnetwork": "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+                  "ipnetwork": "/Compute-computepm/gregory.verstraeten@oracle.com/externalfacing-network",
                   "dns": [  ],
                   "vnicsets": [ "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-ext-vnicset" ],
                   "nat": [ "network/v1/ipreservation:/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-ip" ]
