@@ -1,0 +1,192 @@
+{
+  "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps",
+  "description" : "Application App Server deployment",
+  "relationships": [
+    {
+      "oplan": "apps-instance",
+      "to_oplan": "apps-secrules",
+      "type": "depends"
+    },
+    {
+      "oplan": "apps-instance",
+      "to_oplan": "apps-vnicset",
+      "type": "depends"
+    },
+    {
+      "oplan": "apps-instance",
+      "to_oplan": "apps-acl",
+      "type": "depends"
+    },
+    {
+      "oplan": "apps-instance",
+      "to_oplan": "apps-network",
+      "type": "depends"
+    }
+  ],
+  "oplans" : [
+    {
+      "label": "apps-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-network",
+          "ipAddressPrefix": "192.168.4.0/24",
+          "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "apps-acl",
+      "obj_type": "network/v1/acl",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+        }
+      ]
+    },
+    {
+      "label": "apps-vnicset",
+      "obj_type": "network/v1/vnicset",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "apps-secrules",
+      "obj_type": "network/v1/secrule",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-from-lbr",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/tcp8080" ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-to-db",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/mongodb" ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-from-jumphost",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/icmp", "/Compute-computepm/gregory.verstraeten@oracle.com/ssh" ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-to-natgw",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-acl"
+        }
+      ]
+    },
+    {
+      "obj_type" : "launchplan",
+      "ha_policy" : "active",
+      "label" : "apps-instance",
+      "objects" : [ {
+        "relationships": [ {
+          "instances": [ "apps1", "apps2" ],
+          "type": "different_node"
+          }],
+          "instances" : [
+            {
+              "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps1",
+              "hostname" : "apps1",
+              "networking" : {
+                "eth0" : {
+                  "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps1_eth0",
+                  "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps-network",
+                  "ip": "192.168.4.2",
+                  "dns": [ "apps1" ],
+                  "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset" ]
+                }
+              },
+              "label" : "apps1",
+              "shape" : "oc3",
+              "attributes" : {
+                "userdata" : {
+                  "pre-bootstrap": {
+                    "script" : [
+                      "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
+                      "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                      "cd /root",
+                      "curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -",
+                      "yum -y install nodejs",
+                      "mkdir /myapp",
+                      "cd /myapp",
+                      "curl -o http://computepm.devpool0.opcstorage.com:7820/v1/Storage-computepm/demo/simpleapp.js",
+                      "cd /etc/init.d",
+                      "curl -o http://computepm.devpool0.opcstorage.com:7820/v1/Storage-computepm/demo/simpleapp",
+                      "chkconfig add simpleapp",
+                      "service start simpleapp"
+                    ],
+                    ],
+                    "failonerror": false
+                  }
+                }
+              },
+              "imagelist" : "/oracle/public/OL_6.8_UEKR4_x86_64",
+              "sshkeys" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/greg" ]
+            },
+            {
+              "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps2",
+              "hostname" : "apps2",
+              "networking" : {
+                "eth0" : {
+                  "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps2_eth0",
+                  "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/apps-network",
+                  "ip": "192.168.4.3",
+                  "dns": [ "apps2" ],
+                  "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset" ]
+                }
+              },
+              "label" : "apps2",
+              "shape" : "oc3",
+              "attributes" : {
+                "userdata" : {
+                  "pre-bootstrap": {
+                    "script" : [
+                      "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
+                      "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                      "cd /root",
+                      "curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -",
+                      "yum -y install nodejs",
+                      "mkdir /myapp",
+                      "cd /myapp",
+                      "curl -o http://computepm.devpool0.opcstorage.com:7820/v1/Storage-computepm/demo/simpleapp.js",
+                      "cd /etc/init.d",
+                      "curl -o http://computepm.devpool0.opcstorage.com:7820/v1/Storage-computepm/demo/simpleapp",
+                      "chkconfig add simpleapp",
+                      "service start simpleapp"
+                    ],
+                    "failonerror": false
+                  }
+                }
+              },
+              "imagelist" : "/oracle/public/OL_6.8_UEKR4_x86_64",
+              "sshkeys" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/greg" ]
+            }
+          ]
+      } ]
+    }
+  ]
+}

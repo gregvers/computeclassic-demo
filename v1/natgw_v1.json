@@ -1,0 +1,205 @@
+{
+  "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw",
+  "description" : "NAT Gateway deployment",
+  "relationships": [
+    {
+      "oplan": "natgw-instance",
+      "to_oplan": "natgw-ip",
+      "type": "depends"
+    },
+    {
+      "oplan": "natgw-instance",
+      "to_oplan": "natgw-network",
+      "type": "depends"
+    },
+    {
+      "oplan": "natgw-instance",
+      "to_oplan": "natgw-vnicset",
+      "type": "depends"
+    },
+    {
+      "oplan": "natgw-instance",
+      "to_oplan": "natgw-acl",
+      "type": "depends"
+    },
+    {
+      "oplan": "natgw-instance",
+      "to_oplan": "natgw-secrules",
+      "type": "depends"
+    }
+  ],
+  "oplans": [
+    {
+      "label": "natgw-ip",
+      "obj_type": "network/v1/ipreservation",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-ip",
+          "ipAddressPool": "/oracle/public/public-ippool"
+        }
+      ]
+    },
+    {
+      "label": "natgw-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-network",
+          "ipAddressPrefix": "192.168.2.0/24",
+          "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "natgw-acl",
+      "obj_type": "network/v1/acl",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-acl"
+        }
+      ]
+    },
+    {
+      "label": "natgw-vnicset",
+      "obj_type": "network/v1/vnicset",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+          ]
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-acl"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "natgw-secrules",
+      "obj_type": "network/v1/secrule",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-to-internet",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-from-jumphost",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": ["/Compute-computepm/gregory.verstraeten@oracle.com/ssh",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-from-lbr",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-from-apps",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-from-db",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-acl"
+        }
+      ]
+    },
+    {
+      "label": "natgw-route",
+      "obj_type": "network/v1/route",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/internet-route.storage.oraclecloud.com",
+          "nextHopVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "ipAddressPrefix": "0.0.0.0/0",
+          "adminDistance": "2"
+        }
+      ]
+    },
+    {
+      "obj_type" : "launchplan",
+      "ha_policy" : "active",
+      "label" : "natgw-instance",
+      "objects" : [ {
+        "instances" : [ {
+          "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw",
+          "hostname" : "natgw",
+          "networking" : {
+            "eth0" : {
+              "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw_eth0",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+              "dns": [  ],
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-public-vnicset" ],
+              "nat" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-ip" ]
+            },
+            "eth1" : {
+              "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw_eth1",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-network",
+              "dns": [ "natgw" ],
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset" ],
+              "nat" : [  ]
+            }
+          },
+          "label" : "natgw-instance",
+          "shape" : "oc3",
+          "attributes" : {
+            "userdata" : {
+              "pre-bootstrap" : {
+                "failonerror" : false,
+                "script" : [
+                  "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
+                  "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                  "sysctl -w net.ipv4.ip_forward=1 net.ipv4.conf.eth0.send_redirects=0",
+                  "iptables -t nat -A POSTROUTING -o eth0 -s 0.0.0.0/0 -j MASQUERADE"
+                ]
+              }
+            }
+          },
+          "imagelist" : "/oracle/public/OL_6.8_UEKR4_x86_64",
+          "sshkeys" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/greg" ]
+          }]
+          }]
+        }
+      ]
+    }

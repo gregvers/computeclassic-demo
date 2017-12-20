@@ -1,0 +1,34 @@
+Host jumphost
+	Hostname 10.103.252.40
+	User opc
+	IdentityFile ~/.ssh/greg
+Host natgw
+	Hostname 2.2.2.2
+	User opc
+	IdentityFile ~/.ssh/greg
+	ForwardAgent yes
+	ProxyCommand ssh jumphost -W %h:%p 
+Host lbr
+	Hostname 4.4.4.2
+	User opc
+	IdentityFile ~/.ssh/greg
+	ForwardAgent yes
+	ProxyCommand ssh jumphost -W %h:%p 
+Host apps1
+	Hostname 5.5.5.2
+	User opc
+	IdentityFile ~/.ssh/greg
+	ForwardAgent yes
+	ProxyCommand ssh jumphost -W %h:%p 
+Host apps2
+	Hostname 5.5.5.3
+	User opc
+	IdentityFile ~/.ssh/greg
+	ForwardAgent yes
+	ProxyCommand ssh jumphost -W %h:%p 
+Host db
+	Hostname 6.6.6.2
+	User opc
+	IdentityFile ~/.ssh/greg
+	ForwardAgent yes
+	ProxyCommand ssh jumphost -W %h:%p 

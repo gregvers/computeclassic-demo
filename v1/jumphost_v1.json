@@ -1,0 +1,193 @@
+{
+  "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost",
+  "description": "JumpHost deployment",
+  "relationships": [
+    {
+      "oplan": "jumphost-instance",
+      "to_oplan": "jumphost-secrules",
+      "type": "depends"
+    },
+    {
+      "oplan": "jumphost-instance",
+      "to_oplan": "jumphost-acl",
+      "type": "depends"
+    },
+    {
+      "oplan": "jumphost-instance",
+      "to_oplan": "jumphost-network",
+      "type": "depends"
+    },
+    {
+      "oplan": "jumphost-instance",
+      "to_oplan": "jumphost-vnicset",
+      "type": "depends"
+    },
+    {
+      "oplan": "jumphost-instance",
+      "to_oplan": "jumphost-ip",
+      "type": "depends"
+    }
+  ],
+  "oplans": [
+    {
+      "label": "jumphost-ip",
+      "obj_type": "network/v1/ipreservation",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-ip",
+          "ipAddressPool": "/oracle/public/public-ippool"
+        }
+      ]
+    },
+    {
+      "label": "jumphost-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-network",
+          "ipAddressPrefix": "192.168.1.0/24",
+          "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "jumphost-acl",
+      "obj_type": "network/v1/acl",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-acl"
+        }
+      ]
+    },
+    {
+      "label": "jumphost-vnicset",
+      "obj_type": "network/v1/vnicset",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-acl"
+          ]
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-acl"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "jumphost-secrules",
+      "obj_type": "network/v1/secrule",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-from-internet",
+          "flowDirection": "ingress",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-to-natgw",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-to-lbr",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-to-apps",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-to-db",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-acl"
+        }
+      ]
+    },
+    {
+      "obj_type": "launchplan",
+      "ha_policy": "active",
+      "label": "jumphost-instance",
+      "objects": [
+        {
+          "instances": [
+            {
+              "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost",
+              "hostname": "jumphost",
+              "networking": {
+                "eth0": {
+                  "vnic": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost_eth0",
+                  "ipnetwork": "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+                  "dns": [  ],
+                  "vnicsets": [ "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-public-vnicset" ],
+                  "nat": [ "network/v1/ipreservation:/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-ip" ]
+                },
+                "eth1": {
+                  "vnic": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost_eth1",
+                  "ipnetwork": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-network",
+                  "dns": [ "jumphost" ],
+                  "vnicsets": [ "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset" ],
+                  "nat": [  ]
+                }
+              },
+              "label": "jumphost-instance",
+              "shape": "oc3",
+              "attributes": {
+                "userdata": {
+                  "pre-bootstrap": {
+                    "failonerror": false,
+                    "script": [
+                      "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf"
+                    ]
+                  }
+                }
+              },
+              "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+              "sshkeys": [
+                "/Compute-computepm/gregory.verstraeten@oracle.com/greg"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

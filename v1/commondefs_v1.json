@@ -1,0 +1,67 @@
+{
+  "name": "/Compute-computepm/gregory.verstraeten@oracle.com/commondefs",
+  "description" : "Common infrastructure definitions",
+  "relationships": [],
+  "oplans": [
+    {
+      "label": "public-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+          "ipAddressPrefix": "192.168.0.0/24"
+        }
+      ]
+    },
+    {
+      "label": "IPX",
+      "obj_type": "network/v1/ipnetworkexchange",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "securityprotocols",
+      "obj_type": "network/v1/secprotocol",
+      "objects": [
+        {
+          "description": "ssh",
+          "ipProtocol": "tcp",
+          "dstPortSet": ["22"],
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/ssh"
+        },
+        {
+          "description": "icmp",
+          "ipProtocol": "icmp",
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/icmp"
+        },
+        {
+          "description": "tcp8080",
+          "ipProtocol": "tcp",
+          "dstPortSet": ["8080"],
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/tcp8080"
+        },
+        {
+          "description": "http",
+          "ipProtocol": "tcp",
+          "dstPortSet": ["80"],
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/http"
+        },
+        {
+          "description": "https",
+          "ipProtocol": "tcp",
+          "dstPortSet": ["443"],
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+        },
+        {
+          "description": "mongodb",
+          "ipProtocol": "tcp",
+          "dstPortSet": ["27017"],
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/mongodb"
+        }
+      ]
+    }
+  ]
+}

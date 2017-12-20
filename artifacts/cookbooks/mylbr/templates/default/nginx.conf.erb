@@ -1,0 +1,22 @@
+user nginx;
+worker_processes 1;
+
+error_log  /var/log/nginx/error.log;
+pid        /var/run/nginx.pid;
+events {
+  worker_connections  1024;
+}
+
+http {
+	upstream apps {
+		server apps1:8080;
+		server apps2:8080;
+	}
+
+	server {
+		listen 80;
+		location / {
+			proxy_pass http://apps;
+		}
+	}
+}

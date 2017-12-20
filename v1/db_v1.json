@@ -1,0 +1,127 @@
+{
+  "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/db",
+  "description" : "Application Database deployment",
+  "relationships": [
+    {
+      "oplan": "db-instance",
+      "to_oplan": "db-acl",
+      "type": "depends"
+    },
+    {
+      "oplan": "db-instance",
+      "to_oplan": "db-secrules",
+      "type": "depends"
+    },
+    {
+      "oplan": "db-instance",
+      "to_oplan": "db-vnicset",
+      "type": "depends"
+    },
+    {
+      "oplan": "db-instance",
+      "to_oplan": "db-network",
+      "type": "depends"
+    }
+  ],
+  "oplans" : [
+    {
+      "label": "db-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-network",
+          "ipAddressPrefix": "192.168.5.0/24",
+          "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "db-acl",
+      "obj_type": "network/v1/acl",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+        }
+      ]
+    },
+    {
+      "label": "db-vnicset",
+      "obj_type": "network/v1/vnicset",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "db-secrules",
+      "obj_type": "network/v1/secrule",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-from-apps",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "secProtocols": ["/Compute-computepm/gregory.verstraeten@oracle.com/mongodb"],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-from-jumphost",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/icmp", "/Compute-computepm/gregory.verstraeten@oracle.com/ssh" ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db-to-natgw",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": ["/Compute-computepm/gregory.verstraeten@oracle.com/icmp", "/Compute-computepm/gregory.verstraeten@oracle.com/http", "/Compute-computepm/gregory.verstraeten@oracle.com/https"],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-acl"
+        }
+      ]
+    },
+    {
+      "obj_type" : "launchplan",
+      "ha_policy" : "active",
+      "label" : "db-instance",
+      "objects" : [ {
+        "instances" : [ {
+          "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/db",
+          "hostname" : "db",
+          "networking" : {
+            "eth0" : {
+              "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/db_eth0",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/db-network",
+              "dns": [ "db" ],
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/db-priv-vnicset" ]
+            }
+          },
+          "label" : "db",
+          "shape" : "oc3",
+          "attributes" : {
+            "userdata" : {
+              "pre-bootstrap": {
+                "script" : [
+                  "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
+                  "cd /etc/yum.repos.d",
+                  "curl -o https://repo.mongodb.org/yum/redhat/mongodb-org-3.1.repo",
+                  "sudo yum install -y mongodb-org",
+                  "mongo --eval 'db.myapp.insert({"hit" : 0})'"
+                ],
+                "failonerror": false
+              }
+            }
+          },
+          "imagelist" : "/oracle/public/OL_6.8_UEKR4_x86_64",
+          "sshkeys" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/greg" ]
+        } ]
+      } ]
+    }
+  ]
+}

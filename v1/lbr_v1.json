@@ -1,0 +1,182 @@
+{
+  "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/lbr",
+  "description" : "Application Load Balancer deployment",
+  "relationships": [
+    {
+      "oplan": "lbr-instance",
+      "to_oplan": "lbr-ip",
+      "type": "depends"
+    },
+    {
+      "oplan": "lbr-instance",
+      "to_oplan": "lbr-network",
+      "type": "depends"
+    },
+    {
+      "oplan": "lbr-instance",
+      "to_oplan": "lbr-vnicset",
+      "type": "depends"
+    },
+    {
+      "oplan": "lbr-instance",
+      "to_oplan": "lbr-acl",
+      "type": "depends"
+    },
+    {
+      "oplan": "lbr-instance",
+      "to_oplan": "lbr-secrules",
+      "type": "depends"
+    }
+  ],
+  "oplans" : [
+    {
+      "label": "lbr-ip",
+      "obj_type": "network/v1/ipreservation",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-ip",
+          "ipAddressPool": "/oracle/public/public-ippool"
+        }
+      ]
+    },
+    {
+      "label": "lbr-network",
+      "obj_type": "network/v1/ipnetwork",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-network",
+          "ipAddressPrefix": "192.168.3.0/24",
+          "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
+        }
+      ]
+    },
+    {
+      "label": "lbr-acl",
+      "obj_type": "network/v1/acl",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-acl"
+        }
+      ]
+    },
+    {
+      "label": "lbr-vnicset",
+      "obj_type": "network/v1/vnicset",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-acl"
+          ]
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "appliedAcls": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-acl"
+          ]
+        }
+      ]
+    },
+
+    {
+      "label": "lbr-secrules",
+      "obj_type": "network/v1/secrule",
+      "objects": [
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-from-internet",
+          "flowDirection": "ingress",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-to-apps",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/apps-priv-vnicset",
+          "secProtocols": [ "/Compute-computepm/gregory.verstraeten@oracle.com/tcp8080" ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-from-jumphost",
+          "flowDirection": "ingress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/ssh"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-acl"
+        },
+        {
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-to-natgw",
+          "flowDirection": "egress",
+          "srcVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset",
+          "dstVnicSet": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-priv-vnicset",
+          "secProtocols": [
+            "/Compute-computepm/gregory.verstraeten@oracle.com/icmp",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/http",
+            "/Compute-computepm/gregory.verstraeten@oracle.com/https"
+          ],
+          "acl": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-acl"
+        }
+      ]
+    },
+    {
+      "obj_type" : "launchplan",
+      "ha_policy" : "active",
+      "label" : "lbr-instance",
+      "objects" : [ {
+        "instances" : [ {
+          "name" : "/Compute-computepm/gregory.verstraeten@oracle.com/lbr",
+          "hostname" : "lbr",
+          "networking" : {
+            "eth0" : {
+              "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/lbr_eth0",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/public-network",
+              "dns": [  ],
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-public-vnicset" ],
+              "nat" : [ "network/v1/ipreservation:/Compute-computepm/gregory.verstraeten@oracle.com/lbr-ip" ]
+            },
+            "eth1" : {
+              "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/lbr_eth1",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-network",
+              "dns": [ "lbr" ],
+              "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/lbr-priv-vnicset" ],
+              "nat" : [  ]
+            }
+          },
+          "label" : "lbr",
+          "shape" : "oc3",
+          "attributes" : {
+            "userdata" : {
+              "pre-bootstrap": {
+                "script" : [
+                  "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
+                  "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                  "rpm -Uvh https://packages.chef.io/files/stable/chef/12.21.26/el/6/chef-12.21.26-1.el6.x86_64.rpm"
+                ],
+                "failonerror": false
+              },
+              "chef": {
+                "mode": "solo",
+                "version": "12.19.36",
+                "install_type": "packages",
+                "cookbooks_url": [ "https://computepm.storage.oraclecloud.com/v1/Storage-computepm/demo/cookbooks.tgz" ],
+                "run_list": [ "recipe[mylbr]" ]
+              }
+            }
+          },
+          "imagelist" : "/oracle/public/OL_6.8_UEKR4_x86_64",
+          "sshkeys" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/greg" ]
+          } ]
+          } ]
+        }
+      ]
+    }

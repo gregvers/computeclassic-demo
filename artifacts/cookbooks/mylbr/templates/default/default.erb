@@ -1,0 +1,11 @@
+upstream myapp {
+	server myapp1:8080;
+	server myapp2:8080;
+}
+
+server {
+	listen 80;
+	location / {
+		proxy_pass http://myapp;
+	}
+}

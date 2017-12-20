@@ -1,0 +1,87 @@
+{
+    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/master",
+    "description" : "Master orchestration for commondefs, natgw, jumphost, application tiers",
+    "relationships": [
+        {
+            "oplan": "natgw",
+            "to_oplan": "commondefs",
+            "type": "depends"
+        },
+        {
+            "oplan": "jumphost",
+            "to_oplan": "commondefs",
+            "type": "depends"
+        },
+        {
+            "oplan": "lbr",
+            "to_oplan": "natgw",
+            "type": "depends"
+        },
+        {
+            "oplan": "apps",
+            "to_oplan": "natgw",
+            "type": "depends"
+        },
+        {
+            "oplan": "db",
+            "to_oplan": "natgw",
+            "type": "depends"
+        }
+    ],
+    "oplans": [
+        {
+            "label": "commondefs",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/commondefs"
+                }
+            ]
+        },
+        {
+            "label": "natgw",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw"
+                }
+            ]
+        },
+        {
+            "label": "jumphost",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/jumphost"
+                }
+            ]
+        },
+        {
+            "label": "lbr",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/lbr"
+                }
+            ]
+        },
+        {
+            "label": "apps",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/apps"
+                }
+            ]
+        },
+        {
+            "label": "db",
+            "obj_type": "orchestration",
+            "objects": [
+                {
+                    "name": "/Compute-computepm/gregory.verstraeten@oracle.com/db"
+                }
+            ]
+        }
+    ]
+}
