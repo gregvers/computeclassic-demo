@@ -111,8 +111,7 @@
                   "echo 'proxy=http://www-proxy.us.oracle.com:80' >> /etc/yum.conf",
                   "cd /etc/yum.repos.d",
                   "curl -o https://repo.mongodb.org/yum/redhat/mongodb-org-3.1.repo",
-                  "sudo yum install -y mongodb-org",
-                  "mongo --eval 'db.myapp.insert({"hit" : 0})'"
+                  "sudo yum install -y mongodb-org"
                 ],
                 "failonerror": false
               }
