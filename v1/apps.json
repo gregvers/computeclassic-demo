@@ -139,7 +139,6 @@
                       "chkconfig add simpleapp",
                       "service start simpleapp"
                     ],
-                    ],
                     "failonerror": false
                   }
                 }

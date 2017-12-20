@@ -3,7 +3,7 @@
 # endpoint, account and user
 export IDENTITYDOMAIN=computepm
 export USER=gregory.verstraeten@oracle.com
-export PASSWORD="PM4UenrCYs"
+export PASSWORD="zbrrJtmU+7"
 
 # sitec/computepm
 export COMPUTE_ENDPOINT=http://10.252.131.38:7777
