@@ -1,2 +1,5 @@
 env.sh
 .DS_Store
+*.tfstate
+*.tfstate.backup
+.terraform

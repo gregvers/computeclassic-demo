@@ -44,7 +44,7 @@
       "obj_type": "network/v1/ipnetwork",
       "objects": [
         {
-          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-int-network",
+          "name": "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-network",
           "ipAddressPrefix": "192.168.2.0/24",
           "ipNetworkExchange": "/Compute-computepm/gregory.verstraeten@oracle.com/IPX"
         }
@@ -175,7 +175,7 @@
             },
             "eth1" : {
               "vnic" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw_eth1",
-              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-int-network",
+              "ipnetwork" : "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-network",
               "dns": [ "natgw" ],
               "vnicsets" : [ "/Compute-computepm/gregory.verstraeten@oracle.com/natgw-int-vnicset" ],
               "nat" : [  ]
