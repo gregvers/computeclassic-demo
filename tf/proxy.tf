@@ -1,5 +1,3 @@
-
-
 resource "opc_compute_ip_network" "proxy-network" {
   name                = "proxy-network"
   description         = "proxy-network"
@@ -14,22 +12,52 @@ resource "opc_compute_ip_address_reservation" "proxy-ip" {
   tags            = ["computeclassic-demo", "admin_stack"]
 }
 
+resource "opc_compute_security_protocol" "http" {
+  name        = "http"
+  dst_ports   = ["80"]
+  ip_protocol = "tcp"
+  tags              = ["computeclassic-demo", "admin_stack"]
+}
+
+resource "opc_compute_security_protocol" "https" {
+  name        = "https"
+  dst_ports   = ["443"]
+  ip_protocol = "tcp"
+  tags              = ["computeclassic-demo", "admin_stack"]
+}
+
+resource "opc_compute_security_protocol" "squid" {
+  name        = "squid"
+  dst_ports   = ["3128"]
+  ip_protocol = "tcp"
+  tags        = ["computeclassic-demo", "admin_stack"]
+}
+
 resource "opc_compute_acl" "proxy-int-acl" {
   name = "proxy-int-acl"
-  tags            = ["computeclassic-demo", "admin_stack"]
+  tags = ["computeclassic-demo", "admin_stack"]
 }
 
 resource "opc_compute_acl" "proxy-ext-acl" {
   name = "proxy-ext-acl"
-  tags            = ["computeclassic-demo", "admin_stack"]
+  tags = ["computeclassic-demo", "admin_stack"]
 }
 
 resource "opc_compute_security_rule" "proxy-from-jumphost" {
   name               = "proxy-from-jumphost"
   flow_direction     = "ingress"
   acl                = "${opc_compute_acl.proxy-int-acl.name}"
-  security_protocols = ["${opc_compute_security_protocol.ssh.name}", "${opc_compute_security_protocol.icmp.name}", "${opc_compute_security_protocol.http.name}", "${opc_compute_security_protocol.https.name}", "${opc_compute_security_protocol.squid.name}"]
+  security_protocols = ["${opc_compute_security_protocol.ssh.name}", "${opc_compute_security_protocol.icmp.name}", "${opc_compute_security_protocol.squid.name}"]
   src_vnic_set       = "${opc_compute_vnic_set.jumphost-int-vnicset.name}"
+  dst_vnic_set       = "${opc_compute_vnic_set.proxy-int-vnicset.name}"
+  tags               = ["computeclassic-demo", "admin_stack"]
+}
+
+resource "opc_compute_security_rule" "proxy-from-anywhere" {
+  name               = "proxy-from-anywhere"
+  flow_direction     = "ingress"
+  acl                = "${opc_compute_acl.proxy-int-acl.name}"
+  security_protocols = ["${opc_compute_security_protocol.icmp.name}", "${opc_compute_security_protocol.squid.name}"]
   dst_vnic_set       = "${opc_compute_vnic_set.proxy-int-vnicset.name}"
   tags               = ["computeclassic-demo", "admin_stack"]
 }
@@ -56,12 +84,12 @@ resource "opc_compute_vnic_set" "proxy-ext-vnicset" {
 }
 
 resource "opc_compute_instance" "proxy" {
-  name       = "proxy"
-  hostname   = "proxy"
-  label      = "proxy"
-  shape      = "oc3"
-  image_list = "/oracle/public/OL_6.8_UEKR4_x86_64"
-  ssh_keys = ["${opc_compute_ssh_key.ssh_key.name}"]
+  name         = "proxy"
+  hostname     = "proxy"
+  label        = "proxy"
+  shape        = "oc3"
+  image_list   = "/oracle/public/OL_6.8_UEKR4_x86_64"
+  ssh_keys     = ["${opc_compute_ssh_key.ssh_key.name}"]
   networking_info {
     index      = 0
     ip_network = "${opc_compute_ip_network.external-network.name}"
