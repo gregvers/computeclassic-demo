@@ -3,8 +3,8 @@ Demo of Oracle Compute Classic with Terraform
 
 ## RUN
 terraform init  
-terraform plan -var-file=~/secrets/file.tfvars  
-terraform apply -var-file=~/secrets/file.tfvars  
+terraform plan -var-file=/location/file.tfvars  
+terraform apply -var-file=/location/file.tfvars  
 
 file.tfvars contains:
 user = "user@server.com"  
