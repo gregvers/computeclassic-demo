@@ -1,4 +1,4 @@
 # computeclassic-demo
 Demo of Oracle Compute Classic
 
-![Topology](/topology.png)
+![Topology](/ComputeClassicDemo-topology.png)
