@@ -6,7 +6,7 @@ terraform init
 terraform plan -var-file=/location/file.tfvars  
 terraform apply -var-file=/location/file.tfvars  
 
-file.tfvars contains:
+file.tfvars contains:  
 user = "user@server.com"  
 password = "xxxxxxxx"  
 identity_domain = "myidentitydomain"  
