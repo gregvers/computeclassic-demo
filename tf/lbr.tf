@@ -110,6 +110,7 @@ resource "opc_compute_instance" "lbr" {
         "echo 'http {                               ' >> /etc/nginx/nginx.conf",
         "echo ' upstream apps {                     ' >> /etc/nginx/nginx.conf",
         "echo '   server apps0:8080;                ' >> /etc/nginx/nginx.conf",
+        "echo '   server apps1:8080;                ' >> /etc/nginx/nginx.conf",
         "echo ' }                                   ' >> /etc/nginx/nginx.conf",
         "echo ' server {                            ' >> /etc/nginx/nginx.conf",
         "echo '   listen 80;                        ' >> /etc/nginx/nginx.conf",

@@ -1,10 +1,3 @@
-variable "apps-hostnames" {
-  default = {
-    "1" = "apps1"
-    "2" = "apps2"
-  }
-}
-
 resource "opc_compute_ip_network" "apps-network" {
   name                = "apps-network"
   description         = "apps-network"
@@ -72,7 +65,7 @@ resource "opc_compute_vnic_set" "apps-int-vnicset" {
 }
 
 resource "opc_compute_instance" "apps" {
-  count      = 1
+  count      = 2
   name       = "apps${count.index}"
   hostname   = "apps${count.index}"
   label      = "apps${count.index}"
@@ -101,7 +94,7 @@ resource "opc_compute_instance" "apps" {
         "echo 'http_proxy=http://proxy:3128' >> /etc/sysconfig/docker",
         "systemctl start docker",
         "docker pull gregvers/hitcount",
-        "docker run -d -e HOST_HOSTNAME=`hostname` -e MONGODB_SERVICE_HOST='db' -e MONGODB_SERVICE_PORT='27017' -p 8080:3000 gregvers/hitcount"
+        "docker run -d -h `hostname` -e MONGODB_SERVICE_HOST='db' -e MONGODB_SERVICE_PORT='27017' -p 8080:3000 gregvers/hitcount"
       ]
     }
   }
@@ -112,5 +105,5 @@ JSON
 }
 
 output "apps private IP" {
-  value = "${opc_compute_instance.apps.ip_address}"
+  value = "${opc_compute_instance.apps.*.ip_address}"
 }
