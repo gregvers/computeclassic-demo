@@ -1,0 +1,804 @@
+{
+  "description": "Oracle Compute Classic Demo",
+  "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo",
+  "desired_state": "active",
+  "objects": [
+    {
+      "label": "demo-ssh",
+      "type": "SSHKey",
+      "template": {
+        "enabled": true,
+        "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAgSxa+2koVLARnEsOBmALCzdUVqvV8BLYNLP8DM5mgc1gfNnG5zX7IhJbZIvrWgusxZxHOF12fNPa9RaYSnTSw99Zep+7QHnu1lwWM1b3g8NOXre5Fp8Iw057FvOVVXk95JudeJSWuVLMJScJVxrRrc3YJKZZ3CedEJZCOrtyEvCxaEv2zfbWHiQqH7MEbdWqZqLzeuDfdKsF6qIZYnihdVQ1i/vTbQfnrFi/I5+wgfnlbh67sWQdqUCjui8+kw2dATNA2K3LuSXGoCSkCwAxJlMGCKYT6R0hno7fkaFaQjpHMgHexTKn2KJ9KEX5ITzOtut47Rc7DE2fsZN/VKAF",
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/demo-ssh"
+       }
+    },
+    {
+       "type": "IpNetworkExchange",
+       "label": "demo-IPX",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/demo-IPX"
+        }
+      },
+    {
+       "type": "IpNetwork",
+       "label": "external-network",
+       "description": "external-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/external-network",
+         "ipAddressPrefix": "192.168.0.0/24"
+       }
+    },
+    {
+       "type": "IpNetwork",
+       "label": "jumphost-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-network",
+         "ipAddressPrefix": "192.168.1.0/24",
+         "ipNetworkExchange": "{{demo-IPX:name}}"
+       }
+    },
+    {
+       "type": "IpNetwork",
+       "label": "proxy-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-network",
+         "ipAddressPrefix": "192.168.2.0/24",
+         "ipNetworkExchange": "{{demo-IPX:name}}"
+       }
+    },
+    {
+       "type": "IpNetwork",
+       "label": "lbr-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-network",
+         "ipAddressPrefix": "192.168.3.0/24",
+         "ipNetworkExchange": "{{demo-IPX:name}}"
+       }
+    },
+    {
+       "type": "IpNetwork",
+       "label": "apps-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-network",
+         "ipAddressPrefix": "192.168.4.0/24",
+         "ipNetworkExchange": "{{demo-IPX:name}}"
+       }
+    },
+    {
+       "type": "IpNetwork",
+       "label": "db-network",
+       "template": {
+         "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-network",
+         "ipAddressPrefix": "192.168.5.0/24",
+         "ipNetworkExchange": "{{demo-IPX:name}}"
+       }
+    },
+    {
+      "type": "IpAddressReservation",
+      "label": "jumphost-ip",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-ip",
+        "ipAddressPool": "/oracle/public/public-ippool"
+      }
+    },
+    {
+      "type": "IpAddressReservation",
+      "label": "proxy-ip",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-ip",
+        "ipAddressPool": "/oracle/public/public-ippool"
+      }
+    },
+    {
+      "type": "IpAddressReservation",
+      "label": "lbr-ip",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-ip",
+        "ipAddressPool": "/oracle/public/public-ippool"
+      }
+    },
+    {
+      "label": "ssh",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/ssh",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["22"]
+      }
+    },
+    {
+      "label": "icmp",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/icmp",
+        "ipProtocol": "icmp"
+      }
+    },
+    {
+      "label": "http",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/http",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["80"]
+      }
+    },
+    {
+      "label": "https",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/https",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["443"]
+      }
+    },
+    {
+      "label": "tcp8080",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/tcp8080",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["8080"]
+      }
+    },
+    {
+      "label": "mongodb",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/mongodb",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["27017"]
+      }
+    },
+    {
+      "label": "squid",
+      "type": "SecurityProtocol",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/squid",
+        "ipProtocol": "tcp",
+        "dstPortSet": ["3128"]
+      }
+    },
+    {
+      "label": "jumphost-ext-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-ext-acl"
+      }
+    },
+    {
+      "label": "jumphost-int-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-int-acl"
+      }
+    },
+    {
+      "label": "proxy-ext-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-ext-acl"
+      }
+    },
+    {
+      "label": "proxy-int-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-int-acl"
+      }
+    },
+    {
+      "label": "lbr-ext-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-ext-acl"
+      }
+    },
+    {
+      "label": "lbr-int-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-int-acl"
+      }
+    },
+    {
+      "label": "apps-int-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-int-acl"
+      }
+    },
+    {
+      "label": "db-int-acl",
+      "type": "Acl",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-int-acl"
+      }
+    },
+    {
+     "label": "jumphost-from-anywhere",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-from-anywhere",
+       "acl": "{{jumphost-ext-acl:name}}",
+       "flowDirection": "ingress",
+       "dstVnicSet": "{{jumphost-ext-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "jumphost-to-anywhere",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-to-anywhere",
+       "acl": "{{jumphost-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "jumphost-to-proxy",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-to-proxy",
+       "acl": "{{jumphost-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}", "{{squid:name}}"]
+      }
+    },
+    {
+     "label": "proxy-to-anywhere",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-to-anywhere",
+       "acl": "{{proxy-ext-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{proxy-ext-vnicset:name}}",
+       "secProtocols": ["{{http:name}}","{{https:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "proxy-from-jumphost",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-from-jumphost",
+       "acl": "{{proxy-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "proxy-from-lbr",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-from-lbr",
+       "acl": "{{proxy-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{lbr-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "proxy-from-apps",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-from-apps",
+       "acl": "{{proxy-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{apps-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "proxy-from-db",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-from-db",
+       "acl": "{{proxy-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{db-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "lbr-from-anywhere",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-from-anywhere",
+       "acl": "{{lbr-ext-acl:name}}",
+       "flowDirection": "ingress",
+       "dstVnicSet": "{{lbr-ext-vnicset:name}}",
+       "secProtocols": ["{{http:name}}", "{{https:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "lbr-from-jumphost",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-from-jumphost",
+       "acl": "{{lbr-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "dstVnicSet": "{{lbr-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "lbr-to-apps",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-to-apps",
+       "acl": "{{lbr-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{lbr-int-vnicset:name}}",
+       "dstVnicSet": "{{apps-int-vnicset:name}}",
+       "secProtocols": ["{{tcp8080:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "lbr-to-proxy",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-to-proxy",
+       "acl": "{{lbr-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{lbr-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "apps-from-lbr",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-from-lbr",
+       "acl": "{{apps-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{lbr-int-vnicset:name}}",
+       "dstVnicSet": "{{apps-int-vnicset:name}}",
+       "secProtocols": ["{{tcp8080:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "apps-from-jumphost",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-from-jumphost",
+       "acl": "{{apps-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "dstVnicSet": "{{apps-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "apps-to-db",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-to-db",
+       "acl": "{{apps-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{apps-int-vnicset:name}}",
+       "dstVnicSet": "{{db-int-vnicset:name}}",
+       "secProtocols": ["{{mongodb:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "apps-to-proxy",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-to-proxy",
+       "acl": "{{apps-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{apps-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "db-from-apps",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-from-apps",
+       "acl": "{{db-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{apps-int-vnicset:name}}",
+       "dstVnicSet": "{{db-int-vnicset:name}}",
+       "secProtocols": ["{{mongodb:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "db-from-jumphost",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-from-jumphost",
+       "acl": "{{db-int-acl:name}}",
+       "flowDirection": "ingress",
+       "srcVnicSet": "{{jumphost-int-vnicset:name}}",
+       "dstVnicSet": "{{db-int-vnicset:name}}",
+       "secProtocols": ["{{ssh:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+     "label": "db-to-proxy",
+     "type": "SecurityRule",
+     "template":
+     {
+       "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-to-proxy",
+       "acl": "{{db-int-acl:name}}",
+       "flowDirection": "egress",
+       "srcVnicSet": "{{db-int-vnicset:name}}",
+       "dstVnicSet": "{{proxy-int-vnicset:name}}",
+       "secProtocols": ["{{squid:name}}", "{{icmp:name}}"]
+      }
+    },
+    {
+      "label": "jumphost-ext-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-ext-vnicset",
+        "appliedAcls": ["{{jumphost-ext-acl:name}}"]
+      }
+    },
+    {
+      "label": "jumphost-int-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/jumphost-int-vnicset",
+        "appliedAcls": ["{{jumphost-int-acl:name}}"]
+      }
+    },
+    {
+      "label": "proxy-ext-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-ext-vnicset",
+        "appliedAcls": ["{{proxy-ext-acl:name}}"]
+      }
+    },
+    {
+      "label": "proxy-int-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/proxy-int-vnicset",
+        "appliedAcls": ["{{proxy-int-acl:name}}"]
+      }
+    },
+    {
+      "label": "lbr-ext-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-ext-vnicset",
+        "appliedAcls": ["{{lbr-ext-acl:name}}"]
+      }
+    },
+    {
+      "label": "lbr-int-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/lbr-int-vnicset",
+        "appliedAcls": ["{{lbr-int-acl:name}}"]
+      }
+    },
+    {
+      "label": "apps-int-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/apps-int-vnicset",
+        "appliedAcls": ["{{apps-int-acl:name}}"]
+      }
+    },
+    {
+      "label": "db-int-vnicset",
+      "type": "VirtualNicSet",
+      "template": {
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/db-int-vnicset",
+        "appliedAcls": ["{{db-int-acl:name}}"]
+      }
+    },
+    {
+      "type": "Instance",
+      "label": "jumphost",
+      "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/jumphost",
+      "relationships": [
+        {
+          "type": "depends",
+          "targets": ["proxy"]
+        }
+      ],
+      "template": {
+        "label": "jumphost",
+        "hostname": "jumphost",
+        "shape": "oc3",
+        "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+        "networking": {
+          "eth0": {
+            "ipnetwork" : "{{external-network:name}}",
+            "vnicsets": ["{{jumphost-ext-vnicset:name}}"],
+            "nat": ["network/v1/ipreservation:{{jumphost-ip:name}}"],
+            "is_default_gateway": true
+          },
+          "eth1": {
+            "ipnetwork" : "{{jumphost-network:name}}",
+            "vnicsets": ["{{jumphost-int-vnicset:name}}"],
+            "dns": ["jumphost"]
+          }
+        },
+        "sshkeys": [ "{{demo-ssh:name}}" ],
+        "attributes": {
+            "userdata": {
+              "pre-bootstrap": {
+                "script": [
+                  "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                  "echo 'proxy=http://proxy:3128' >> /etc/yum.conf",
+                  "cd /tmp",
+                  "until curl --proxy http://proxy:3128 -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; do sleep 10; done",
+                  "yum install -y ./epel-release-latest-7.noarch.rpm"
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "Instance",
+        "label": "proxy",
+        "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/proxy",
+        "template": {
+          "label": "proxy",
+          "hostname": "proxy",
+          "shape": "oc3",
+          "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+          "networking": {
+            "eth0": {
+              "ipnetwork" : "{{external-network:name}}",
+              "vnicsets": ["{{proxy-ext-vnicset:name}}"],
+              "nat": ["network/v1/ipreservation:{{proxy-ip:name}}"],
+              "is_default_gateway": true
+            },
+            "eth1": {
+              "ipnetwork" : "{{proxy-network:name}}",
+              "vnicsets": ["{{proxy-int-vnicset:name}}"],
+              "dns": ["proxy"]
+            }
+          },
+          "sshkeys": [ "{{demo-ssh:name}}" ],
+          "attributes": {
+              "userdata": {
+                "pre-bootstrap": {
+                  "script": [
+                    "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                    "sysctl -w net.ipv4.ip_forward=1 net.ipv4.conf.eth0.send_redirects=0",
+                    "iptables -t nat -A POSTROUTING -o eth0 -s 0.0.0.0/0 -j MASQUERADE",
+                    "yum -y install squid",
+                    "service squid start"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "Instance",
+          "label": "lbr",
+          "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/lbr",
+          "relationships": [
+            {
+              "type": "depends",
+              "targets": ["proxy"]
+            }
+          ],
+          "template": {
+            "label": "lbr",
+            "hostname": "lbr",
+            "shape": "oc3",
+            "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+            "networking": {
+              "eth0": {
+                "ipnetwork" : "{{external-network:name}}",
+                "vnicsets": ["{{lbr-ext-vnicset:name}}"],
+                "nat": ["network/v1/ipreservation:{{lbr-ip:name}}"],
+                "is_default_gateway": true
+              },
+              "eth1": {
+                "ipnetwork" : "{{lbr-network:name}}",
+                "vnicsets": ["{{lbr-int-vnicset:name}}"],
+                "dns": ["lbr"]
+              }
+            },
+            "sshkeys": [ "{{demo-ssh:name}}" ],
+            "attributes": {
+                "userdata": {
+                  "pre-bootstrap": {
+                    "script": [
+                      "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                      "echo 'proxy=http://proxy:3128' >> /etc/yum.conf",
+                      "cd /tmp",
+                      "until curl --proxy http://proxy:3128 -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; do sleep 10; done",
+                      "yum install -y ./epel-release-latest-7.noarch.rpm",
+                      "yum install -y nginx",
+                      "echo 'events {                             ' > /etc/nginx/nginx.conf",
+                      "echo '  worker_connections  1024;          ' >> /etc/nginx/nginx.conf",
+                      "echo '}                                    ' >> /etc/nginx/nginx.conf",
+                      "echo 'http {                               ' >> /etc/nginx/nginx.conf",
+                      "echo ' upstream apps {                     ' >> /etc/nginx/nginx.conf",
+                      "echo '   server apps0:8080;                ' >> /etc/nginx/nginx.conf",
+                      "echo '   server apps1:8080;                ' >> /etc/nginx/nginx.conf",
+                      "echo ' }                                   ' >> /etc/nginx/nginx.conf",
+                      "echo ' server {                            ' >> /etc/nginx/nginx.conf",
+                      "echo '   listen 80;                        ' >> /etc/nginx/nginx.conf",
+                      "echo '   location / {                      ' >> /etc/nginx/nginx.conf",
+                      "echo '     proxy_pass http://apps;         ' >> /etc/nginx/nginx.conf",
+                      "echo '   }                                 ' >> /etc/nginx/nginx.conf",
+                      "echo ' }                                   ' >> /etc/nginx/nginx.conf",
+                      "echo '}                                    ' >> /etc/nginx/nginx.conf",
+                      "service nginx start"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Instance",
+            "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/apps0",
+            "label": "apps0",
+            "relationships": [
+              {
+                "type": "depends",
+                "targets": ["proxy"]
+              }
+            ],
+            "template": {
+              "label": "apps0",
+              "hostname": "apps0",
+              "shape": "oc3",
+              "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+              "networking": {
+                "eth0": {
+                  "ipnetwork" : "{{apps-network:name}}",
+                  "ip": "192.168.4.2",
+                  "vnicsets": ["{{apps-int-vnicset:name}}"],
+                  "dns": ["apps0"]
+                }
+              },
+              "sshkeys": [ "{{demo-ssh:name}}" ],
+              "attributes": {
+                  "userdata": {
+                    "pre-bootstrap": {
+                      "script": [
+                        "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                        "echo 'proxy=http://proxy:3128' >> /etc/yum.conf",
+                        "cd /tmp",
+                        "until curl --proxy http://proxy:3128 -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; do sleep 10; done",
+                        "yum install -y ./epel-release-latest-7.noarch.rpm",
+                        "yum install --enablerepo ol7_addons -y docker-engine",
+                        "systemctl enable docker",
+                        "echo 'http_proxy=http://proxy:3128' >> /etc/sysconfig/docker",
+                        "systemctl start docker",
+                        "docker pull gregvers/hitcount",
+                        "docker run -d -h `hostname` -e MONGODB_SERVICE_HOST='db' -e MONGODB_SERVICE_PORT='27017' -p 8080:3000 gregvers/hitcount"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Instance",
+              "label": "apps1",
+              "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/apps1",
+              "relationships": [
+                {
+                  "type": "depends",
+                  "targets": ["proxy"]
+                }
+              ],
+              "template": {
+                "label": "apps1",
+                "hostname": "apps1",
+                "shape": "oc3",
+                "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+                "networking": {
+                  "eth0": {
+                    "ipnetwork" : "{{apps-network:name}}",
+                    "ip": "192.168.4.3",
+                    "vnicsets": ["{{apps-int-vnicset:name}}"],
+                    "dns": ["apps1"]
+                  }
+                },
+                "sshkeys": [ "{{demo-ssh:name}}" ],
+                "attributes": {
+                    "userdata": {
+                      "pre-bootstrap": {
+                        "script": [
+                          "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                          "echo 'proxy=http://proxy:3128' >> /etc/yum.conf",
+                          "cd /tmp",
+                          "until curl --proxy http://proxy:3128 -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; do sleep 10; done",
+                          "yum install -y ./epel-release-latest-7.noarch.rpm",
+                          "yum install --enablerepo ol7_addons -y docker-engine",
+                          "systemctl enable docker",
+                          "echo 'http_proxy=http://proxy:3128' >> /etc/sysconfig/docker",
+                          "systemctl start docker",
+                          "docker pull gregvers/hitcount",
+                          "docker run -d -h `hostname` -e MONGODB_SERVICE_HOST='db' -e MONGODB_SERVICE_PORT='27017' -p 8080:3000 gregvers/hitcount"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "Instance",
+                "label": "db",
+                "name": "/Compute-orcdevtest1/gregory.verstraeten@oracle.com/computeclassic-demo/db",
+                "relationships": [
+                  {
+                    "type": "depends",
+                    "targets": ["proxy"]
+                  }
+                ],
+                "template": {
+                  "label": "db",
+                  "hostname": "db",
+                  "shape": "oc3",
+                  "imagelist": "/oracle/public/OL_7.2_UEKR4_x86_64",
+                  "networking": {
+                    "eth0": {
+                      "ipnetwork" : "{{db-network:name}}",
+                      "vnicsets": ["{{db-int-vnicset:name}}"],
+                      "dns": ["db"]
+                    }
+                  },
+                  "sshkeys": [ "{{demo-ssh:name}}" ],
+                  "attributes": {
+                      "userdata": {
+                        "pre-bootstrap": {
+                          "script": [
+                            "sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/ksplice-uptrack.repo",
+                            "echo 'proxy=http://proxy:3128' >> /etc/yum.conf",
+                            "cd /tmp",
+                            "until curl --proxy http://proxy:3128 -O https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; do sleep 10; done",
+                            "yum install -y ./epel-release-latest-7.noarch.rpm",
+                            "yum install --enablerepo ol7_addons -y docker-engine",
+                            "systemctl enable docker",
+                            "echo 'http_proxy=http://proxy:3128' >> /etc/sysconfig/docker",
+                            "systemctl start docker",
+                            "docker pull mongo",
+                            "docker run -d -p 27017:27017 mongo"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+  ],
+  "tags": ["computeclassic-demo"]
+}
