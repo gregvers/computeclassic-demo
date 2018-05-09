@@ -8,9 +8,10 @@ The application source code is located at https://github.com/gregvers/hitcount
 
 ## Deploy using Orchestration v2  
 ### From the CLI:  
+Download and install the CLI following instructions at https://docs.oracle.com/en/cloud/iaas/compute-iaas-cloud/stopc/preparing-use-cli.html  
+Run the following commands  
 $ cd orchestration-v2  
 $ opc compute orchestration-v2 add computeclassic-demo.json  
-For more information on the CLI, refer to https://docs.oracle.com/en/cloud/iaas/compute-iaas-cloud/stopc/preparing-use-cli.html  
 
 ### From the Compute-Classic console:  
 upload orchestration and select computeclassic-demo.json in folder orchestration-v2  
