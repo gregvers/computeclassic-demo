@@ -1,7 +1,10 @@
 # computeclassic-demo
-Demo of Oracle Compute Classic
-
+Deployment of a 3 tier application on Oracle Compute Classic. Oracle Compute
+Classic runs on Oracle Cloud Infrastructure Classic and Oracle Cloud at Customer.
+The deployment topology is the following:
 ![Topology](/ComputeClassicDemo-topology.png)
+
+The application source code is located at https://github.com/gregvers/hitcount
 
 ## Deploy using Orchestration v2  
 ### From the CLI:  
@@ -14,7 +17,8 @@ upload orchestration and select computeclassic-demo.json in folder orchestration
 
 ## Deploy using Terraform  
 Download and install Terraform from https://www.terraform.io/  
-Run the forllowing commands  
+Run the following commands  
+$ cd terraform
 $ terraform init  
 $ terraform plan -var-file=/location/file.tfvars  
 $ terraform apply -var-file=/location/file.tfvars  
